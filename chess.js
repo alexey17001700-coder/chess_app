@@ -525,16 +525,33 @@
   }
 
   function bestMove(s, depth) {
-    var moves = orderMoves(legalMoves(s));
-    if (!moves.length) return null;
+    var root = orderMoves(legalMoves(s));
+    if (!root.length) return null;
 
-    // немного случайности среди равных ходов — чтобы ИИ не был монотонным
-    var best = moves[0], bestVal = -Infinity, alpha = -Infinity, beta = Infinity;
+    var best = root[0];
+    var deadline = Date.now() + 2500;   // страховка от зависания на слабых телефонах
 
-    for (var i = 0; i < moves.length; i++) {
-      var v = -negamax(makeMove(s, moves[i]), depth - 1, -beta, -alpha, 1);
-      if (v > bestVal) { bestVal = v; best = moves[i]; }
-      if (v > alpha) alpha = v;
+    // Итеративное углубление: не успели — отдаём лучший ход прошлой глубины
+    for (var d = 1; d <= depth; d++) {
+      var bestVal = -Infinity, ties = [], aborted = false;
+
+      for (var i = 0; i < root.length; i++) {
+        var v = -negamax(makeMove(s, root[i]), d - 1, -Infinity, Infinity, 1);
+        if (v > bestVal) { bestVal = v; ties = [root[i]]; }
+        else if (v === bestVal) { ties.push(root[i]); }
+        if (Date.now() > deadline) { aborted = true; break; }
+      }
+
+      if (aborted) break;
+
+      // среди равных по оценке ходов выбираем случайный — партии не повторяются
+      best = ties[(Math.random() * ties.length) | 0];
+
+      // лучший ход в начало списка — ускоряет следующий проход
+      var bi = root.indexOf(best);
+      if (bi > 0) { root.splice(bi, 1); root.unshift(best); }
+
+      if (bestVal >= MATE - 1000) break;  // мат найден — глубже не нужно
     }
     return best;
   }
