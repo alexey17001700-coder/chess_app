@@ -340,6 +340,8 @@
 
     n.turn = white ? BLACK : WHITE;
     n.moves = s.moves.concat([m]);
+    n.keys = (s.keys ? s.keys.slice() : []);
+    n.keys.push(positionKey(n));
     return n;
   }
 
