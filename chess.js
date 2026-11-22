@@ -670,34 +670,57 @@
     } catch (e) {}
     applyTheme(theme);
 
-    /* --------------------------- анимации: вкл/выкл --------------------------- */
+    /* --------------------------- анимации: полные / лёгкие / выкл --------------------------- */
 
-    // Анимируем только если не выключено кнопкой и не просили «меньше движения».
+    var reducedMotion = false;
+    try {
+      reducedMotion = !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches);
+    } catch (e) {}
+
     function animEnabled() {
-      if (!animOn) return false;
+      return animMode !== 'off' && !reducedMotion;
+    }
+
+    // Слабый/мобильный девайс: 32 одновременно «дышащие» фигуры греют телефон.
+    function deviceIsWeak() {
       try {
-        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
-      } catch (e) {}
-      return true;
+        var cores = navigator.hardwareConcurrency || 4;
+        var mem = navigator.deviceMemory || 4;
+        var coarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
+        var small = Math.min(window.innerWidth, window.innerHeight) <= 620;
+        return mem <= 2 || cores <= 2 || (coarse && small);
+      } catch (e) { return false; }
     }
 
     function applyAnim() {
-      document.body.classList.toggle('no-anim', !animOn);
+      document.body.classList.toggle('no-anim', animMode === 'off');
+      document.body.classList.toggle('perf-lite', animMode === 'lite');
       if (animBtn) {
-        animBtn.textContent = animOn ? '✨ Анимации: вкл' : '✨ Анимации: выкл';
-        animBtn.setAttribute('aria-pressed', animOn ? 'true' : 'false');
+        animBtn.textContent = animMode === 'full' ? '✨ Анимации: полные'
+                            : animMode === 'lite' ? '✨ Анимации: лёгкие'
+                            : '✨ Анимации: выкл';
+        animBtn.setAttribute('aria-pressed', animMode === 'off' ? 'false' : 'true');
+        animBtn.title = 'Полные → лёгкие (для телефона) → выкл';
       }
-      try { localStorage.setItem('chessAnim', animOn ? '1' : '0'); } catch (e) {}
+      try { localStorage.setItem('chessAnim', animMode); } catch (e) {}
     }
 
-    try {
-      if (localStorage.getItem('chessAnim') === '0') animOn = false;
-    } catch (e) {}
+    var savedAnim = null;
+    try { savedAnim = localStorage.getItem('chessAnim'); } catch (e) {}
+    if (savedAnim === 'full' || savedAnim === 'lite' || savedAnim === 'off') {
+      animMode = savedAnim;
+    } else if (savedAnim === '0') {
+      animMode = 'off';
+    } else if (savedAnim === '1') {
+      animMode = 'full';
+    } else {
+      animMode = deviceIsWeak() ? 'lite' : 'full';   // телефон — сразу лёгкий режим
+    }
     applyAnim();
 
     if (animBtn) {
       animBtn.addEventListener('click', function () {
-        animOn = !animOn;
+        animMode = animMode === 'full' ? 'lite' : (animMode === 'lite' ? 'off' : 'full');
         applyAnim();
         render();
       });
