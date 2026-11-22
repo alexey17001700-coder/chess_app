@@ -726,16 +726,16 @@
           var color = p === p.toUpperCase() ? 'white' : 'black';
           var justMoved = !!(lastMove && idx === lastMove.to);
           var style = '--d:' + (-(idx % 7) * 0.45).toFixed(2) + 's';
-          var cls = 'piece ' + color;
+          var pcls = 'piece ' + color;
           if (justMoved) {
-            cls += ' moved';
+            pcls += ' moved';
             var fF = Chess.fileOf(lastMove.from), rF = Chess.rankOf(lastMove.from);
             var fT = Chess.fileOf(lastMove.to),   rT = Chess.rankOf(lastMove.to);
             var vcF = flipped ? 7 - fF : fF, vrF = flipped ? 7 - rF : rF;
             var vcT = flipped ? 7 - fT : fT, vrT = flipped ? 7 - rT : rT;
             style += ';--dx:' + (vcF - vcT) + ';--dy:' + (vrF - vrT);
           }
-          inner += '<span class="' + cls + '" style="' + style + '">' + pieceSVG(p) + '</span>';
+          inner += '<span class="' + pcls + '" style="' + style + '">' + pieceSVG(p) + '</span>';
         }
         if (lastMove && idx === lastMove.to) {
           var lm = state.moves[state.moves.length - 1];
@@ -749,17 +749,75 @@
           }
         }
 
-        // координаты
-        var vRow = Math.floor(v / 8), vCol = v % 8;
-        if (vRow === 7) inner += '<span class="file">' + 'abcdefgh'[c] + '</span>';
-        if (vCol === 0) inner += '<span class="rank">' + (8 - r) + '</span>';
-
         html += '<div class="' + cls + '" data-idx="' + idx + '">' + inner + '</div>';
       }
 
       boardEl.innerHTML = html;
+      renderCoords();
       updateStatus();
+      renderPlates();
       renderMoves();
+    }
+
+    /* --------------------------- координаты вокруг доски --------------------------- */
+
+    function renderCoords() {
+      var r = '', f = '', i;
+      for (i = 0; i < 8; i++) {
+        r += '<span>' + (flipped ? i + 1 : 8 - i) + '</span>';
+        f += '<span>' + 'abcdefgh'[flipped ? 7 - i : i] + '</span>';
+      }
+      if (ranksEl) ranksEl.innerHTML = r;
+      if (filesEl) filesEl.innerHTML = f;
+    }
+
+    /* --------------------------- плашки игроков --------------------------- */
+
+    function renderPlates() {
+      var caps = { w: [], b: [] };
+      var lost = { w: 0, b: 0 };
+      for (var i = 0; i < state.moves.length; i++) {
+        var m = state.moves[i];
+        if (!m.captured) continue;
+        var loser = isWhitePiece(m.piece) ? 'b' : 'w';   // кто потерял фигуру
+        caps[loser].push(m.captured);
+        lost[loser] += VALUE[m.captured.toUpperCase()] || 0;
+      }
+      var diff = lost.b - lost.w;    // > 0 — впереди белые
+      var ac = aiColor();
+
+      function fill(plateEl, capEl, scoreEl, color) {
+        if (!plateEl) return;
+
+        var nameEl = plateEl.querySelector('.plate-name');
+        if (nameEl) {
+          var n = color === WHITE ? 'Белые' : 'Чёрные';
+          if (ac === color) n += ' · ИИ';
+          else if (ac !== null) n += ' · вы';
+          nameEl.textContent = n;
+        }
+        plateEl.classList.toggle('dark-side', color === BLACK);
+        plateEl.classList.toggle('active', !over && state.turn === color);
+
+        var html = '';
+        for (var j = 0; j < caps[color].length; j++) {
+          var cp = caps[color][j];
+          html += '<span class="piece ' + (cp === cp.toUpperCase() ? 'white' : 'black') + '">' +
+                  pieceSVG(cp) + '</span>';
+        }
+        if (capEl) capEl.innerHTML = html;
+
+        var adv = color === WHITE ? diff : -diff;
+        if (scoreEl) {
+          scoreEl.textContent = adv > 0
+            ? '+' + (adv % 100 === 0 ? adv / 100 : (adv / 100).toFixed(1))
+            : '';
+        }
+      }
+
+      var bottomColor = flipped ? BLACK : WHITE;
+      fill(plateBot, capBot, scoreBot, bottomColor);
+      fill(plateTop, capTop, scoreTop, bottomColor === WHITE ? BLACK : WHITE);
     }
 
     function updateStatus() {
