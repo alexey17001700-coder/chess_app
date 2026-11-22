@@ -629,6 +629,7 @@
     var levelEl   = document.getElementById('level');
 
     var state, stack, selected, legal, flipped, thinking, over, lastMove;
+    var aiToken = 0;  // защита от «устаревших» ходов ИИ после «Новой игры»
 
     function aiColor() {
       var mode = modeEl.value;
