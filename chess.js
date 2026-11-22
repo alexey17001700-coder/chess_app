@@ -831,7 +831,8 @@
       ['Q', 'R', 'B', 'N'].forEach(function (pr) {
         var bt = document.createElement('button');
         var white = candidates[0].piece === candidates[0].piece.toUpperCase();
-        bt.textContent = Chess.GLYPH[white ? pr : pr.toLowerCase()];
+        bt.innerHTML = '<span class="piece ' + (white ? 'white' : 'black') + '">' +
+                       pieceSVG(white ? pr : pr.toLowerCase()) + '</span>';
         bt.addEventListener('click', function () {
           var m = candidates.filter(function (x) { return x.promotion === pr; })[0];
           promoEl.classList.add('hidden');
