@@ -632,8 +632,46 @@
     var modeEl    = document.getElementById('mode');
     var levelEl   = document.getElementById('level');
 
+    var ranksEl   = document.getElementById('ranks');
+    var filesEl   = document.getElementById('files');
+    var themesEl  = document.getElementById('themes');
+    var plateTop  = document.getElementById('plateTop');
+    var plateBot  = document.getElementById('plateBottom');
+    var capTop    = document.getElementById('capTop');
+    var capBot    = document.getElementById('capBottom');
+    var scoreTop  = document.getElementById('scoreTop');
+    var scoreBot  = document.getElementById('scoreBottom');
+
     var state, stack, selected, legal, flipped, thinking, over, lastMove;
     var aiToken = 0;  // защита от «устаревших» ходов ИИ после «Новой игры»
+    var theme = 'wood';
+
+    /* --------------------------- оформление доски --------------------------- */
+
+    function applyTheme(name) {
+      theme = name;
+      document.body.setAttribute('data-theme', name);
+      if (themesEl) {
+        var btns = themesEl.querySelectorAll('.theme-btn');
+        for (var i = 0; i < btns.length; i++) {
+          btns[i].classList.toggle('active', btns[i].getAttribute('data-theme') === name);
+        }
+      }
+      try { localStorage.setItem('chessTheme', name); } catch (e) {}
+    }
+
+    try {
+      var savedTheme = localStorage.getItem('chessTheme');
+      if (savedTheme) theme = savedTheme;
+    } catch (e) {}
+    applyTheme(theme);
+
+    if (themesEl) {
+      themesEl.addEventListener('click', function (e) {
+        var b = e.target && e.target.closest ? e.target.closest('.theme-btn') : null;
+        if (b) applyTheme(b.getAttribute('data-theme'));
+      });
+    }
 
     function aiColor() {
       var mode = modeEl.value;
