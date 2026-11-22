@@ -867,7 +867,7 @@
 
       boardEl.innerHTML = html;
 
-      if (animate) if (animate) shownMoves = state.moves.length;
+      shownMoves = state.moves.length;
       entering = false;
 
       renderCoords();
