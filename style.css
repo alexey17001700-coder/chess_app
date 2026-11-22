@@ -117,9 +117,10 @@ body{
 .square .piece.white svg .eye{fill:#3a2f1c}
 .square .piece.black svg .eye{fill:#cfe0f0}
 
-/* фигура, которая только что сходила — подпрыгивает */
+/* фигура, которая только что сходила — плавно скользит на новое поле */
+.square .piece.moved{z-index:3}
 .square .piece.moved svg{
-  animation:hop .36s cubic-bezier(.2,.9,.3,1.3), breathe 3.4s ease-in-out .36s infinite;
+  animation:slide .30s cubic-bezier(.25,.85,.3,1.05), breathe 3.4s ease-in-out .30s infinite;
 }
 /* выбранная фигура «дышит» активнее */
 .square.sel .piece svg{animation:sel 1.05s ease-in-out infinite}
