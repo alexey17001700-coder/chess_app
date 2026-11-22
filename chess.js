@@ -124,7 +124,8 @@
       ep: s.ep,
       halfmove: s.halfmove,
       fullmove: s.fullmove,
-      moves: s.moves.slice()
+      moves: s.moves.slice(),
+      keys: s.keys ? s.keys.slice() : []
     };
   }
 
