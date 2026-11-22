@@ -668,6 +668,39 @@
     } catch (e) {}
     applyTheme(theme);
 
+    /* --------------------------- анимации: вкл/выкл --------------------------- */
+
+    // Анимируем только если не выключено кнопкой и не просили «меньше движения».
+    function animEnabled() {
+      if (!animOn) return false;
+      try {
+        if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return false;
+      } catch (e) {}
+      return true;
+    }
+
+    function applyAnim() {
+      document.body.classList.toggle('no-anim', !animOn);
+      if (animBtn) {
+        animBtn.textContent = animOn ? '✨ Анимации: вкл' : '✨ Анимации: выкл';
+        animBtn.setAttribute('aria-pressed', animOn ? 'true' : 'false');
+      }
+      try { localStorage.setItem('chessAnim', animOn ? '1' : '0'); } catch (e) {}
+    }
+
+    try {
+      if (localStorage.getItem('chessAnim') === '0') animOn = false;
+    } catch (e) {}
+    applyAnim();
+
+    if (animBtn) {
+      animBtn.addEventListener('click', function () {
+        animOn = !animOn;
+        applyAnim();
+        render();
+      });
+    }
+
     if (themesEl) {
       themesEl.addEventListener('click', function (e) {
         var b = e.target && e.target.closest ? e.target.closest('.theme-btn') : null;
