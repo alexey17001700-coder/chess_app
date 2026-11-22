@@ -421,6 +421,13 @@
       }
       return { over: true, checkmate: false, text: 'Пат — ничья' };
     }
+    if (s.keys && s.keys.length) {
+      var cur = s.keys[s.keys.length - 1], rep = 0;
+      for (var ki = 0; ki < s.keys.length; ki++) if (s.keys[ki] === cur) rep++;
+      if (rep >= 3) {
+        return { over: true, checkmate: false, text: 'Ничья: троекратное повторение позиции' };
+      }
+    }
     if (s.halfmove >= 100) {
       return { over: true, checkmate: false, text: 'Ничья: правило 50 ходов' };
     }
