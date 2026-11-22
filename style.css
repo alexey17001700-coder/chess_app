@@ -626,6 +626,8 @@ body{
   .square .piece svg .head,
   .square .piece svg .cross,
   .square .piece svg .spark,
+  .square .piece.enter svg,
+  .square .piece.promo-in svg,
   .square .piece.moved svg,
   .square.sel .piece svg,
   .square.check .piece svg,
@@ -633,3 +635,48 @@ body{
   .status.thinking::after,
   .square .burst{animation:none}
 }
+
+/* =========================================================
+   ЭНЕРГОСБЕРЕГАЮЩИЙ РЕЖИМ (perf-lite)
+   «Дышат» только активные фигуры: выбранная, только что сходившая,
+   король под шахом и фигура, которая выходит на доску.
+   Остальные 20+ фигур статичны — телефон не греется.
+   ========================================================= */
+body.perf-lite .square .piece svg{animation:none;transition:transform .18s ease}
+body.perf-lite .square .piece svg .eye,
+body.perf-lite .square .piece svg .head,
+body.perf-lite .square .piece svg .cross,
+body.perf-lite .square .piece svg .spark{animation:none}
+
+body.perf-lite .square .piece.moved svg{animation:slide .30s cubic-bezier(.25,.85,.3,1.05)}
+body.perf-lite .square .piece.promo-in svg{animation:pieceIn .34s cubic-bezier(.2,.9,.3,1.25) both}
+body.perf-lite .square .piece.enter svg{animation:pieceIn .40s cubic-bezier(.22,.9,.3,1.15) both var(--e,0s)}
+body.perf-lite .square .piece.ghost{animation:ghostOut .42s ease-out forwards}
+
+body.perf-lite .square.sel .piece svg{animation:sel 1.05s ease-in-out infinite}
+body.perf-lite .square.sel .piece svg .eye{animation:blink 4.6s ease-in-out infinite}
+body.perf-lite .square.sel .piece svg .head{animation:head 6.4s ease-in-out infinite}
+body.perf-lite .square.sel .piece svg .cross{animation:glow 2.8s ease-in-out infinite}
+body.perf-lite .square.sel .piece svg .spark{animation:spark 3.2s ease-in-out infinite}
+
+body.perf-lite .square.check .piece svg{animation:shake .55s ease-in-out infinite}
+
+/* =========================================================
+   АНИМАЦИИ ВЫКЛЮЧЕНЫ КНОПКОЙ (body.no-anim)
+   ========================================================= */
+body.no-anim .square .piece,
+body.no-anim .square .piece svg,
+body.no-anim .square .piece svg *,
+body.no-anim .square .piece.enter svg,
+body.no-anim .square .piece.promo-in svg,
+body.no-anim .square .piece.moved svg,
+body.no-anim .square.sel .piece svg,
+body.no-anim .square.check .piece svg,
+body.no-anim .square.check::before,
+body.no-anim .status.thinking::after,
+body.no-anim .square .burst{
+  animation:none !important;
+  transition:none !important;
+}
+body.no-anim .square .piece.ghost{display:none}
+body.no-anim .square:hover .piece{transform:none}
