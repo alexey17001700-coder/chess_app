@@ -897,8 +897,8 @@
       fill(plateTop, capTop, scoreTop, bottomColor === WHITE ? BLACK : WHITE);
     }
 
-    function updateStatus() {
-      var st = Chess.gameStatus(state);
+    function updateStatus(st) {
+      st = st || Chess.gameStatus(state);
       over = st.over;
       statusEl.classList.remove('over', 'warn', 'thinking');
       if (st.over) {
