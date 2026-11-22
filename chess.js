@@ -759,8 +759,11 @@
       thinking = true;
       updateStatus();
       var depth = parseInt(levelEl.value, 10) || 2;
+      var token = ++aiToken;
       setTimeout(function () {
+        if (token !== aiToken) return;   // игру перезапустили — старый ход отменяем
         var m = Chess.bestMove(state, depth);
+        if (token !== aiToken) return;
         thinking = false;
         if (!m) { updateStatus(); return; }
         applyMove(m);
