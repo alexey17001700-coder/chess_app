@@ -132,13 +132,22 @@ body{
   to{opacity:1;transform:translateY(0) scale(1)}
 }
 @keyframes breathe{
-  0%,100%{transform:translateY(0) scaleY(1)}
-  50%{transform:translateY(-1.6%) scaleY(1.018)}
+  0%,100%{transform:translateY(0) scaleY(1) rotate(0deg)}
+  25%{transform:translateY(-1.2%) scaleY(1.014) rotate(-.6deg)}
+  50%{transform:translateY(-1.6%) scaleY(1.018) rotate(0deg)}
+  75%{transform:translateY(-1.2%) scaleY(1.014) rotate(.6deg)}
 }
-@keyframes hop{
-  0%{transform:translateY(0) scale(1)}
-  45%{transform:translateY(-18%) scale(1.04)}
-  100%{transform:translateY(0) scale(1)}
+@keyframes slide{
+  from{transform:translate(calc(var(--dx,0) * 113.64%), calc(var(--dy,0) * 113.64%))}
+  to{transform:translate(0,0)}
+}
+@keyframes blink{
+  0%,92%,100%{transform:scaleY(1)}
+  95%{transform:scaleY(.12)}
+}
+@keyframes burst{
+  from{transform:scale(.3);opacity:.95}
+  to{transform:scale(1.45);opacity:0}
 }
 @keyframes sel{
   0%,100%{transform:translateY(0) scale(1)}
