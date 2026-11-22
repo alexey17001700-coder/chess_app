@@ -743,16 +743,13 @@
     function undo() {
       if (thinking) return;
       var ac = aiColor();
-      var back = 0;
       if (stack.length <= 1) return;
       stack.pop();
-      back++;
-      // в игре с ИИ откатываем до хода человека
+      // в игре с ИИ откатываем до того состояния, где ход снова у человека
       if (ac !== null) {
-        while (stack.length > 1 && stack[stack.length - 1].turn !== (ac === BLACK ? WHITE : BLACK)) {
+        while (stack.length > 1 && stack[stack.length - 1].turn === ac) {
           stack.pop();
         }
-        if (stack[stack.length - 1].turn === ac && stack.length > 1) stack.pop();
       }
       state = stack[stack.length - 1];
       over = false;
