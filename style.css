@@ -94,6 +94,7 @@ body{
   stroke-linecap:round;
   transform-origin:50% 100%;
   animation:breathe 3.4s ease-in-out infinite;
+  animation-delay:var(--d,0s);
 }
 
 .square .piece.white svg{
