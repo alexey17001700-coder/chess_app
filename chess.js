@@ -712,7 +712,9 @@
         var p = b[idx];
         if (p) {
           var color = p === p.toUpperCase() ? 'white' : 'black';
-          inner += '<span class="piece ' + color + '">' + Chess.GLYPH[p] + '</span>';
+          var justMoved = !!(lastMove && idx === lastMove.to);
+          inner += '<span class="piece ' + color + (justMoved ? ' moved' : '') + '">' +
+                   pieceSVG(p) + '</span>';
         }
 
         if (legal.length && idx !== selected) {
