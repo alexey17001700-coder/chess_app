@@ -270,6 +270,31 @@ body{
 /* король под шахом — дрожит */
 .square.check .piece svg{animation:shake .55s ease-in-out infinite}
 
+/* фигура «выходит на доску» — новая партия, появление по очереди */
+.square .piece.enter svg{
+  animation:pieceIn .40s cubic-bezier(.22,.9,.3,1.15) both var(--e,0s),
+            breathe 3.4s ease-in-out infinite calc(var(--e,0s) + .40s);
+}
+/* превращённая пешка «выпрыгивает» на поле */
+.square .piece.promo-in svg{
+  animation:pieceIn .34s cubic-bezier(.2,.9,.3,1.25) both,
+            breathe 3.4s ease-in-out infinite .34s;
+}
+
+/* взятая фигура растворяется на месте, а не остаётся под новой */
+.square .piece.ghost{
+  position:absolute;
+  left:6%;top:6%;
+  z-index:1;
+  animation:ghostOut .42s ease-out forwards;
+}
+.square .piece.ghost svg{animation:none;filter:grayscale(.45) brightness(1.15) drop-shadow(0 3px 3px rgba(0,0,0,.45))}
+
+@keyframes ghostOut{
+  0%{opacity:.95;transform:scale(1) rotate(0deg)}
+  100%{opacity:0;transform:scale(.55) rotate(14deg) translateY(7%)}
+}
+
 @keyframes pieceIn{
   from{opacity:0;transform:translateY(-16%) scale(.85)}
   to{opacity:1;transform:translateY(0) scale(1)}
