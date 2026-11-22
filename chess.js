@@ -645,6 +645,8 @@
     var state, stack, selected, legal, flipped, thinking, over, lastMove;
     var aiToken = 0;  // защита от «устаревших» ходов ИИ после «Новой игры»
     var theme = 'wood';
+    var animOn = true;                                 // «жизнь» фигур вкл/выкл
+    var animBtn = document.getElementById('anim');
 
     /* --------------------------- оформление доски --------------------------- */
 
