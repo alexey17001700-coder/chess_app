@@ -226,13 +226,16 @@ body{
 .promo button{
   width:calc(var(--size)/8);
   height:calc(var(--size)/8);
-  font-size:calc(var(--size)/8 * 0.62);
   display:flex;align-items:center;justify-content:center;
-  background:#e9dcc0;color:#141a22;
-  border:none;border-radius:10px;cursor:pointer;
+  background:#1b2430;
+  border:1px solid var(--line);
+  border-radius:10px;cursor:pointer;
   box-shadow:0 6px 14px rgba(0,0,0,.4);
+  transition:.15s;
 }
-.promo button:hover{background:#fff3d6}
+.promo button:hover{background:#243040;border-color:var(--accent)}
+.promo button .piece{width:76%;height:76%;animation:none}
+.promo button .piece svg{animation:none}
 
 .panel{
   background:linear-gradient(180deg,#1a222d,#151b24);
