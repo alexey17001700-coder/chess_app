@@ -823,12 +823,13 @@
     function updateStatus() {
       var st = Chess.gameStatus(state);
       over = st.over;
-      statusEl.classList.remove('over', 'warn');
+      statusEl.classList.remove('over', 'warn', 'thinking');
       if (st.over) {
         statusEl.classList.add('over');
         statusEl.textContent = st.text;
       } else if (thinking) {
-        statusEl.textContent = 'ИИ думает…';
+        statusEl.classList.add('thinking');
+        statusEl.textContent = 'ИИ думает';
       } else {
         if (st.check) statusEl.classList.add('warn');
         statusEl.textContent = st.text;
@@ -838,16 +839,19 @@
     function renderMoves() {
       var moves = state.moves;
       var html = '';
+      var lastIdx = moves.length - 1;
       for (var i = 0; i < moves.length; i += 2) {
         var num = i / 2 + 1;
         var w = moves[i] ? moves[i].san : '';
         var bl = moves[i + 1] ? moves[i + 1].san : '';
-        html += '<li><span class="num">' + num + '.</span>' +
+        var cur = (i === lastIdx || i + 1 === lastIdx) ? ' class="current"' : '';
+        html += '<li' + cur + '><span class="num">' + num + '.</span>' +
                 '<span class="w">' + w + '</span>' +
                 '<span class="b">' + bl + '</span></li>';
       }
       moveListEl.innerHTML = html;
-      moveListEl.parentElement.scrollTop = moveListEl.parentElement.scrollHeight;
+      var box = moveListEl.parentElement;
+      if (box) box.scrollTop = box.scrollHeight;
     }
 
     /* --------------------------- ходы --------------------------- */
