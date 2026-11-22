@@ -1066,6 +1066,7 @@
       over = false;
       selected = -1;
       legal = [];
+      shownMoves = state.moves.length;   // откат не анимируем как новый ход
       lastMove = state.moves.length
         ? { from: state.moves[state.moves.length - 1].from, to: state.moves[state.moves.length - 1].to }
         : null;
