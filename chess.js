@@ -737,13 +737,43 @@
 
     /* --------------------------- отрисовка --------------------------- */
 
+    /* экранная (визуальная) координата поля с учётом переворота доски */
+    function viewCol(idx) { var f = Chess.fileOf(idx); return flipped ? 7 - f : f; }
+    function viewRow(idx) { var r = Chess.rankOf(idx); return flipped ? 7 - r : r; }
+
     function render() {
       var b = state.board;
       var html = '';
-      var checkIdx = -1;
-      if (Chess.inCheck(state)) {
-        checkIdx = b.indexOf(state.turn === WHITE ? 'K' : 'k');
+
+      // Статус считаем один раз: gameStatus перебирает все легальные ходы.
+      var st = Chess.gameStatus(state);
+      over = st.over;
+
+      var checkIdx = -1, mateIdx = -1;
+      if (st.check || st.checkmate) {
+        var ki = b.indexOf(state.turn === WHITE ? 'K' : 'k');
+        if (st.checkmate) mateIdx = ki; else checkIdx = ki;
       }
+
+      /* --- что именно «оживляем» после последнего хода --- */
+      var lm = state.moves.length ? state.moves[state.moves.length - 1] : null;
+      var slideTo = -1, slideFrom = -1, rookTo = -1, rookFrom = -1;
+      var ghostAt = -1, ghostPiece = '', promoTo = -1;
+      if (lm) {
+        slideFrom = lm.from;
+        slideTo = lm.to;
+        if (lm.castle) {                       // ладья едет вместе с королём
+          var w = isWhitePiece(lm.piece);
+          rookFrom = lm.castle === 'K' ? (w ? 63 : 7)  : (w ? 56 : 0);
+          rookTo   = lm.castle === 'K' ? (w ? 61 : 5)  : (w ? 59 : 3);
+        }
+        if (lm.captured) {                     // взятая фигура «растворяется»
+          ghostPiece = lm.captured;
+          ghostAt = lm.ep ? lm.to + (isWhitePiece(lm.piece) ? 8 : -8) : lm.to;
+        }
+        if (lm.promotion) promoTo = lm.to;
+      }
+      var animate = animEnabled();
 
       for (var v = 0; v < 64; v++) {
         var idx = flipped ? 63 - v : v;
@@ -754,28 +784,40 @@
         if (lastMove && (idx === lastMove.from || idx === lastMove.to)) cls += ' last';
         if (idx === selected) cls += ' sel';
         if (idx === checkIdx) cls += ' check';
+        if (idx === mateIdx) cls += ' mate';
 
         var inner = '';
         var p = b[idx];
+
+        // призрак взятой фигуры — под фигурой, которая встала на её место
+        if (animate && idx === ghostAt && ghostPiece) {
+          inner += '<span class="piece ghost ' +
+                   (isWhitePiece(ghostPiece) ? 'white' : 'black') + '">' +
+                   pieceSVG(ghostPiece) + '</span>';
+        }
+
         if (p) {
           var color = p === p.toUpperCase() ? 'white' : 'black';
-          var justMoved = !!(lastMove && idx === lastMove.to);
           var style = '--d:' + (-(idx % 7) * 0.45).toFixed(2) + 's';
           var pcls = 'piece ' + color;
-          if (justMoved) {
+          var dx = 0, dy = 0;
+
+          if (idx === slideTo && lm) {
+            dx = viewCol(slideFrom) - viewCol(slideTo);
+            dy = viewRow(slideFrom) - viewRow(slideTo);
             pcls += ' moved';
-            var fF = Chess.fileOf(lastMove.from), rF = Chess.rankOf(lastMove.from);
-            var fT = Chess.fileOf(lastMove.to),   rT = Chess.rankOf(lastMove.to);
-            var vcF = flipped ? 7 - fF : fF, vrF = flipped ? 7 - rF : rF;
-            var vcT = flipped ? 7 - fT : fT, vrT = flipped ? 7 - rT : rT;
-            style += ';--dx:' + (vcF - vcT) + ';--dy:' + (vrF - vrT);
+          } else if (idx === rookTo && rookFrom >= 0) {
+            dx = viewCol(rookFrom) - viewCol(rookTo);
+            dy = viewRow(rookFrom) - viewRow(rookTo);
+            pcls += ' moved';
           }
+          if (dx || dy) style += ';--dx:' + dx + ';--dy:' + dy;
+          if (idx === promoTo) pcls += ' promo-in';   // новая фигура «выпрыгивает»
+
           inner += '<span class="' + pcls + '" style="' + style + '">' + pieceSVG(p) + '</span>';
         }
-        if (lastMove && idx === lastMove.to) {
-          var lm = state.moves[state.moves.length - 1];
-          if (lm && lm.captured) inner += '<span class="burst"></span>';
-        }
+
+        if (animate && idx === ghostAt && ghostPiece) inner += '<span class="burst"></span>';
 
         if (legal.length && idx !== selected) {
           var hit = legal.filter(function (m) { return m.to === idx; });
@@ -789,7 +831,7 @@
 
       boardEl.innerHTML = html;
       renderCoords();
-      updateStatus();
+      updateStatus(st);
       renderPlates();
       renderMoves();
     }
