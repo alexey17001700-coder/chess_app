@@ -821,7 +821,7 @@
         var p = b[idx];
 
         // призрак взятой фигуры — под фигурой, которая встала на её место
-        if (animate && idx === ghostAt && ghostPiece) {
+        if (fresh && idx === ghostAt && ghostPiece) {
           inner += '<span class="piece ghost ' +
                    (isWhitePiece(ghostPiece) ? 'white' : 'black') + '">' +
                    pieceSVG(ghostPiece) + '</span>';
@@ -833,22 +833,27 @@
           var pcls = 'piece ' + color;
           var dx = 0, dy = 0;
 
-          if (idx === slideTo && lm) {
+          if (doEnter) {                            // фигуры «выходят» на доску каскадом
+            style += ';--e:' + (v * 0.014).toFixed(3) + 's';
+            pcls += ' enter';
+          }
+
+          if (fresh && idx === slideTo && lm) {
             dx = viewCol(slideFrom) - viewCol(slideTo);
             dy = viewRow(slideFrom) - viewRow(slideTo);
             pcls += ' moved';
-          } else if (idx === rookTo && rookFrom >= 0) {
+          } else if (fresh && idx === rookTo && rookFrom >= 0) {
             dx = viewCol(rookFrom) - viewCol(rookTo);
             dy = viewRow(rookFrom) - viewRow(rookTo);
             pcls += ' moved';
           }
           if (dx || dy) style += ';--dx:' + dx + ';--dy:' + dy;
-          if (idx === promoTo) pcls += ' promo-in';   // новая фигура «выпрыгивает»
+          if (fresh && idx === promoTo) pcls += ' promo-in';   // новая фигура «выпрыгивает»
 
           inner += '<span class="' + pcls + '" style="' + style + '">' + pieceSVG(p) + '</span>';
         }
 
-        if (animate && idx === ghostAt && ghostPiece) inner += '<span class="burst"></span>';
+        if (fresh && idx === ghostAt && ghostPiece) inner += '<span class="burst"></span>';
 
         if (legal.length && idx !== selected) {
           var hit = legal.filter(function (m) { return m.to === idx; });
