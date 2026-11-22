@@ -801,6 +801,10 @@
         if (lm.promotion) promoTo = lm.to;
       }
       var animate = animEnabled();
+      // «свежий» ход анимируем один раз: при перерисовке (клик, выбор фигуры)
+      // slide и вспышка не должны проигрываться заново.
+      var fresh = animate && state.moves.length !== shownMoves;
+      var doEnter = entering;
 
       for (var v = 0; v < 64; v++) {
         var idx = flipped ? 63 - v : v;
