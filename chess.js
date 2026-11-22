@@ -86,6 +86,13 @@
   function rankOf(i) { return i >> 3; }
   function sqName(i) { return 'abcdefgh'[fileOf(i)] + (8 - rankOf(i)); }
 
+  /* Ключ позиции — для правила троекратного повторения */
+  function positionKey(s) {
+    var c = (s.castling.wK ? 'K' : '') + (s.castling.wQ ? 'Q' : '') +
+            (s.castling.bK ? 'k' : '') + (s.castling.bQ ? 'q' : '');
+    return s.board.join('') + '|' + s.turn + '|' + c + '|' + s.ep;
+  }
+
   function initialState() {
     var board = new Array(64).fill('');
     var back = ['r','n','b','q','k','b','n','r'];
@@ -95,15 +102,18 @@
       board[48 + c] = 'P';
       board[56 + c] = back[c].toUpperCase();         // 1-я горизонталь (белые)
     }
-    return {
+    var s = {
       board: board,
       turn: WHITE,
       castling: { wK: true, wQ: true, bK: true, bQ: true },
       ep: -1,          // поле для взятия на проходе
       halfmove: 0,
       fullmove: 1,
-      moves: []        // история ходов (для нотации)
+      moves: [],       // история ходов (для нотации)
+      keys: []         // история ключей позиций (для повторения)
     };
+    s.keys.push(positionKey(s));
+    return s;
   }
 
   function cloneState(s) {
