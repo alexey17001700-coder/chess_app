@@ -72,14 +72,90 @@ body{
 .square.light{background:var(--light)}
 .square.dark{background:var(--dark)}
 
+/* ---------- ЖИВЫЕ ФИГУРЫ (SVG + анимация) ---------- */
+.svg-defs{position:absolute;width:0;height:0;overflow:hidden}
+
 .square .piece{
   pointer-events:none;
-  filter:drop-shadow(0 2px 2px rgba(0,0,0,.45));
-  transform:translateY(-1px);
+  position:relative;
+  width:88%;
+  height:88%;
+  display:flex;
+  align-items:flex-end;
+  justify-content:center;
+  transform-origin:50% 92%;
+  animation:pieceIn .3s cubic-bezier(.2,.9,.3,1.35) both;
 }
 
-.square .piece.white{color:#fff;text-shadow:0 0 1px #000,0 1px 2px rgba(0,0,0,.6)}
-.square .piece.black{color:#141a22;text-shadow:0 0 1px rgba(255,255,255,.35)}
+.square .piece svg{
+  width:100%;
+  height:100%;
+  overflow:visible;
+  stroke-linejoin:round;
+  stroke-linecap:round;
+  transform-origin:50% 100%;
+  animation:breathe 3.4s ease-in-out infinite;
+}
+
+.square .piece.white svg{
+  fill:url(#gradW);
+  stroke:#7d6844;
+  stroke-width:1.3;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.5));
+}
+.square .piece.black svg{
+  fill:url(#gradB);
+  stroke:#05080c;
+  stroke-width:1.3;
+  filter:drop-shadow(0 3px 3px rgba(0,0,0,.55));
+}
+
+.square .piece svg .cross{fill:none;stroke-width:2.4}
+.square .piece.white svg .cross{stroke:#7d6844}
+.square .piece.black svg .cross{stroke:#05080c}
+.square .piece svg .eye{stroke:none}
+.square .piece.white svg .eye{fill:#3a2f1c}
+.square .piece.black svg .eye{fill:#cfe0f0}
+
+/* фигура, которая только что сходила — подпрыгивает */
+.square .piece.moved svg{
+  animation:hop .36s cubic-bezier(.2,.9,.3,1.3), breathe 3.4s ease-in-out .36s infinite;
+}
+/* выбранная фигура «дышит» активнее */
+.square.sel .piece svg{animation:sel 1.05s ease-in-out infinite}
+/* король под шахом — дрожит */
+.square.check .piece svg{animation:shake .55s ease-in-out infinite}
+
+@keyframes pieceIn{
+  from{opacity:0;transform:translateY(-16%) scale(.85)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+@keyframes breathe{
+  0%,100%{transform:translateY(0) scaleY(1)}
+  50%{transform:translateY(-1.6%) scaleY(1.018)}
+}
+@keyframes hop{
+  0%{transform:translateY(0) scale(1)}
+  45%{transform:translateY(-18%) scale(1.04)}
+  100%{transform:translateY(0) scale(1)}
+}
+@keyframes sel{
+  0%,100%{transform:translateY(0) scale(1)}
+  50%{transform:translateY(-8%) scale(1.07)}
+}
+@keyframes shake{
+  0%,100%{transform:translateX(0) rotate(0)}
+  25%{transform:translateX(-7%) rotate(-4deg)}
+  75%{transform:translateX(7%) rotate(4deg)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .square .piece,
+  .square .piece svg,
+  .square .piece.moved svg,
+  .square.sel .piece svg,
+  .square.check .piece svg{animation:none}
+}
 
 .square.last::before{
   content:"";
