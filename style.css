@@ -113,7 +113,7 @@ body{
 .square .piece svg .cross{fill:none;stroke-width:2.4}
 .square .piece.white svg .cross{stroke:#7d6844}
 .square .piece.black svg .cross{stroke:#05080c}
-.square .piece svg .eye{stroke:none}
+.square .piece svg .eye{stroke:none;transform-box:fill-box;transform-origin:center;animation:blink 4.6s ease-in-out infinite}
 .square .piece.white svg .eye{fill:#3a2f1c}
 .square .piece.black svg .eye{fill:#cfe0f0}
 
