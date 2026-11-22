@@ -506,11 +506,13 @@
   }
 
   function negamax(s, depth, alpha, beta, ply) {
+    // Сначала отсекаем листья: генерация ходов на каждом листе была лишней
+    // и заметно тормозила «Сложный» уровень на телефонах.
+    if (depth <= 0) return quiesce(s, alpha, beta, ply, 2);
     var moves = orderMoves(legalMoves(s));
     if (moves.length === 0) {
       return inCheck(s) ? -(MATE - ply) : 0;
     }
-    if (depth <= 0) return quiesce(s, alpha, beta, ply, 2);
 
     var best = -Infinity;
     for (var i = 0; i < moves.length; i++) {
