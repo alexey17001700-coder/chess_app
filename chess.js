@@ -674,7 +674,8 @@
         if (p) {
           var color = p === p.toUpperCase() ? 'white' : 'black';
           var justMoved = !!(lastMove && idx === lastMove.to);
-          inner += '<span class="piece ' + color + (justMoved ? ' moved' : '') + '">' +
+          inner += '<span class="piece ' + color + (justMoved ? ' moved' : '') +
+                   '" style="--d:' + (-(idx % 7) * 0.45).toFixed(2) + 's">' +
                    pieceSVG(p) + '</span>';
         }
 
