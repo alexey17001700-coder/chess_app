@@ -643,6 +643,7 @@
     }
 
     function reset() {
+      aiToken++;
       state = Chess.initialState();
       stack = [state];
       selected = -1;
