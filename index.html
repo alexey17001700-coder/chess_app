@@ -3,24 +3,28 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#0b0f16">
+<meta name="color-scheme" content="dark">
 <title>Шахматы — играй онлайн</title>
 <link rel="stylesheet" href="style.css">
 </head>
-<body>
+<body data-theme="wood">
+
 <svg class="svg-defs" width="0" height="0" aria-hidden="true" focusable="false">
   <defs>
     <linearGradient id="gradW" x1="0" y1="0" x2="0.35" y2="1">
       <stop offset="0" stop-color="#ffffff"/>
-      <stop offset="0.45" stop-color="#f4ecda"/>
-      <stop offset="1" stop-color="#c8b691"/>
+      <stop offset="0.45" stop-color="#f6efdf"/>
+      <stop offset="1" stop-color="#cbb894"/>
     </linearGradient>
     <linearGradient id="gradB" x1="0" y1="0" x2="0.35" y2="1">
-      <stop offset="0" stop-color="#5d6875"/>
-      <stop offset="0.45" stop-color="#2a323c"/>
-      <stop offset="1" stop-color="#0c1015"/>
+      <stop offset="0" stop-color="#6b7684"/>
+      <stop offset="0.45" stop-color="#2b333e"/>
+      <stop offset="1" stop-color="#0a0e13"/>
     </linearGradient>
   </defs>
 </svg>
+
 <div class="app">
   <header class="top">
     <h1>♞ Шахматы</h1>
@@ -28,12 +32,32 @@
   </header>
 
   <main class="main">
-    <div class="board-area">
-      <div class="coords">
-        <div id="board" class="board" aria-label="Шахматная доска"></div>
-        <div id="promo" class="promo hidden" aria-label="Выбор фигуры для превращения"></div>
+    <section class="board-area">
+
+      <div class="plate" id="plateTop">
+        <span class="plate-dot"></span>
+        <span class="plate-name">Чёрные</span>
+        <span class="plate-captured" id="capTop"></span>
+        <span class="plate-score" id="scoreTop"></span>
       </div>
-    </div>
+
+      <div class="board-wrap">
+        <div class="ranks" id="ranks" aria-hidden="true"></div>
+        <div class="board-slot">
+          <div id="board" class="board" aria-label="Шахматная доска"></div>
+          <div id="promo" class="promo hidden" aria-label="Выбор фигуры для превращения"></div>
+        </div>
+        <div class="files" id="files" aria-hidden="true"></div>
+      </div>
+
+      <div class="plate" id="plateBottom">
+        <span class="plate-dot"></span>
+        <span class="plate-name">Белые</span>
+        <span class="plate-captured" id="capBottom"></span>
+        <span class="plate-score" id="scoreBottom"></span>
+      </div>
+
+    </section>
 
     <aside class="panel">
       <div id="status" class="status">Ход белых</div>
@@ -54,10 +78,19 @@
         </select>
       </label>
 
+      <div class="field">
+        <span class="field-title">Оформление доски</span>
+        <div class="themes" id="themes">
+          <button type="button" class="theme-btn" data-theme="wood"   title="Дерево"><i></i></button>
+          <button type="button" class="theme-btn" data-theme="marble" title="Мрамор"><i></i></button>
+          <button type="button" class="theme-btn" data-theme="neon"   title="Неон"><i></i></button>
+        </div>
+      </div>
+
       <div class="buttons">
-        <button id="new" class="primary">Новая игра</button>
-        <button id="undo">Отменить ход</button>
-        <button id="flip">Перевернуть доску</button>
+        <button id="new" class="primary">♻ Новая игра</button>
+        <button id="undo">↶ Отменить ход</button>
+        <button id="flip">⇅ Перевернуть доску</button>
       </div>
 
       <div class="moves">
@@ -70,6 +103,6 @@
   </main>
 </div>
 
-  <script src="chess.js"></script>
+<script src="chess.js"></script>
 </body>
 </html>
