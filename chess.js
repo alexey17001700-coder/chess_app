@@ -369,6 +369,9 @@
 
     n.turn = white ? BLACK : WHITE;
     n.moves = s.moves.concat([m]);
+    // история ключей позиций — нужна для правила троекратного повторения
+    n.keys = (s.keys ? s.keys.slice() : []);
+    n.keys.push(positionKey(n));
     return n;
   }
 
