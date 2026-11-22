@@ -645,8 +645,10 @@
     var state, stack, selected, legal, flipped, thinking, over, lastMove;
     var aiToken = 0;  // защита от «устаревших» ходов ИИ после «Новой игры»
     var theme = 'wood';
-    var animOn = true;                                 // «жизнь» фигур вкл/выкл
+    var animMode = 'full';          // «жизнь» фигур: full | lite | off
     var animBtn = document.getElementById('anim');
+    var shownMoves = 0;             // сколько ходов уже анимировано (чтобы slide не повторялся)
+    var entering = false;           // новая партия: фигуры выходят на доску по очереди
 
     /* --------------------------- оформление доски --------------------------- */
 
