@@ -753,6 +753,8 @@
       thinking = false;
       over = false;
       lastMove = null;
+      shownMoves = 0;
+      entering = true;
       flipped = (modeEl.value === 'ai-w');
       promoEl.classList.add('hidden');
       promoEl.innerHTML = '';
