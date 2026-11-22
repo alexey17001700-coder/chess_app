@@ -17,6 +17,48 @@
   var GLYPH = {K:'\u2654',Q:'\u2655',R:'\u2656',B:'\u2657',N:'\u2658',P:'\u2659',
                k:'\u265A',q:'\u265B',r:'\u265C',b:'\u265D',n:'\u265E',p:'\u265F'};
 
+  /* ---------- живые фигуры: SVG-тела (viewBox 0 0 100 100) ---------- */
+  var PIECE_SVG = {
+    P:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M50 40c-9 0-16 8-16 18 0 8 5 15 12 18h8c7-3 12-10 12-18 0-10-7-18-16-18z"/>' +
+      '<circle class="body line" cx="50" cy="30" r="14"/>' +
+      '<circle class="eye" cx="45" cy="30" r="2.4"/><circle class="eye" cx="55" cy="30" r="2.4"/>',
+    R:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M36 76V40h28v36z"/>' +
+      '<path class="body line" d="M30 40V22h9v9h7v-9h8v9h7v-9h9v18z"/>' +
+      '<circle class="eye" cx="43" cy="56" r="2.6"/><circle class="eye" cx="57" cy="56" r="2.6"/>',
+    N:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M34 76c0-17 4-27 12-35 3-3 6-6 7-10l3-8 5 7 6 3c8 4 12 12 12 22v21z"/>' +
+      '<circle class="eye" cx="58" cy="45" r="2.7"/>',
+    B:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M50 22c-11 0-19 10-19 21 0 9 6 16 13 19h12c7-3 13-10 13-19 0-11-8-21-19-21z"/>' +
+      '<circle class="body line" cx="50" cy="15" r="6"/>' +
+      '<path class="line" d="M50 30v22" stroke-width="3" fill="none"/>' +
+      '<circle class="eye" cx="43" cy="40" r="2.2"/><circle class="eye" cx="57" cy="40" r="2.2"/>',
+    Q:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M50 32c-10 0-18 9-18 20 0 9 6 16 14 19h8c8-3 14-10 14-19 0-11-8-20-18-20z"/>' +
+      '<path class="body line" d="M28 36l6-16 8 10 8-16 8 16 8-10 6 16z"/>' +
+      '<circle class="body line" cx="50" cy="14" r="4"/>' +
+      '<circle class="eye" cx="44" cy="46" r="2.2"/><circle class="eye" cx="56" cy="46" r="2.2"/>',
+    K:'<ellipse class="body line" cx="50" cy="87" rx="27" ry="7"/>' +
+      '<rect class="body line" x="31" y="76" width="38" height="12" rx="6"/>' +
+      '<path class="body line" d="M50 36c-10 0-18 9-18 20 0 9 6 16 14 19h8c8-3 14-10 14-19 0-11-8-20-18-20z"/>' +
+      '<path class="body line" d="M30 38l4-14 8 8 8-14 8 14 8-8 4 14z"/>' +
+      '<path class="line" d="M50 4v12M44 10h12" stroke-width="4" fill="none"/>' +
+      '<circle class="eye" cx="44" cy="50" r="2.2"/><circle class="eye" cx="56" cy="50" r="2.2"/>'
+  };
+
+  function pieceSVG(p) {
+    var t = p.toUpperCase();
+    return '<svg class="psvg" viewBox="0 0 100 100" aria-hidden="true">' +
+           (PIECE_SVG[t] || '') + '</svg>';
+  }
+
   var VALUE = {P:100,N:320,B:330,R:500,Q:900,K:0};
 
   /* ---------- таблицы позиционных оценок (для белых, индекс 0 = a8) ---------- */
@@ -340,8 +382,6 @@
 
     n.turn = white ? BLACK : WHITE;
     n.moves = s.moves.concat([m]);
-    n.keys = (s.keys ? s.keys.slice() : []);
-    n.keys.push(positionKey(n));
     return n;
   }
 
