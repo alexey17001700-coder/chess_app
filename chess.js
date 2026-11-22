@@ -683,9 +683,21 @@
         if (p) {
           var color = p === p.toUpperCase() ? 'white' : 'black';
           var justMoved = !!(lastMove && idx === lastMove.to);
-          inner += '<span class="piece ' + color + (justMoved ? ' moved' : '') +
-                   '" style="--d:' + (-(idx % 7) * 0.45).toFixed(2) + 's">' +
-                   pieceSVG(p) + '</span>';
+          var style = '--d:' + (-(idx % 7) * 0.45).toFixed(2) + 's';
+          var cls = 'piece ' + color;
+          if (justMoved) {
+            cls += ' moved';
+            var fF = Chess.fileOf(lastMove.from), rF = Chess.rankOf(lastMove.from);
+            var fT = Chess.fileOf(lastMove.to),   rT = Chess.rankOf(lastMove.to);
+            var vcF = flipped ? 7 - fF : fF, vrF = flipped ? 7 - rF : rF;
+            var vcT = flipped ? 7 - fT : fT, vrT = flipped ? 7 - rT : rT;
+            style += ';--dx:' + (vcF - vcT) + ';--dy:' + (vrF - vrT);
+          }
+          inner += '<span class="' + cls + '" style="' + style + '">' + pieceSVG(p) + '</span>';
+        }
+        if (lastMove && idx === lastMove.to) {
+          var lm = state.moves[state.moves.length - 1];
+          if (lm && lm.captured) inner += '<span class="burst"></span>';
         }
 
         if (legal.length && idx !== selected) {
